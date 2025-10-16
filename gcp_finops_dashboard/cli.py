@@ -2,6 +2,8 @@
 
 import sys
 import argparse
+import os
+from pathlib import Path
 from typing import Any, Dict, Optional
 from dotenv import load_dotenv
 import requests
@@ -20,6 +22,10 @@ from rich.table import Table
 
 console = Console()
 __version__ = "1.0.0"
+
+# Reports directory configuration - same as API
+REPORTS_DIR = Path(__file__).parent.parent / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
 
 
 def display_audit_results_table(audit_name: str, result: Any) -> None:
@@ -385,11 +391,21 @@ Examples:
                 visualizer.display_dashboard(data)
             elif report_type == "pdf":
                 print_progress("Generating PDF report...")
-                report_gen = ReportGenerator()
-                # Add .pdf extension to the report name
-                pdf_filename = f"{args.report_name}.pdf"
-                output_name = pdf_filename if args.dir is None else f"{args.dir}/{pdf_filename}"
-                output_path = report_gen.generate_report(data, output_name)
+                # Use reports directory by default, but allow override with --dir
+                if args.dir is None:
+                    # Use the reports directory and generate filename with timestamp
+                    from datetime import datetime
+                    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                    pdf_filename = f"{args.report_name}-{timestamp}.pdf"
+                    output_path = REPORTS_DIR / pdf_filename
+                    report_gen = ReportGenerator(output_dir=str(REPORTS_DIR))
+                else:
+                    # Use custom directory if specified
+                    pdf_filename = f"{args.report_name}.pdf"
+                    output_path = Path(args.dir) / pdf_filename
+                    report_gen = ReportGenerator(output_dir=args.dir)
+                
+                report_gen.generate_report(data, str(output_path))
                 print_progress(f"Report saved to: {output_path}", done=True)
             elif report_type in ["csv", "json"]:
                 console.print(f"[bold yellow]{report_type.upper()} export not yet implemented[/]")
@@ -573,8 +589,20 @@ def report(
         
         # Generate report
         print_progress("Generating PDF report...")
-        report_gen = ReportGenerator()
-        output_path = report_gen.generate_report(data, output)
+        # Use reports directory by default, but allow override with --output
+        if output == "gcp-finops-report.pdf":
+            # Default filename - use reports directory with timestamp
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            pdf_filename = f"gcp-finops-report-{timestamp}.pdf"
+            output_path = REPORTS_DIR / pdf_filename
+            report_gen = ReportGenerator(output_dir=str(REPORTS_DIR))
+        else:
+            # Custom filename - use current directory or specified path
+            output_path = Path(output)
+            report_gen = ReportGenerator(output_dir=str(output_path.parent))
+        
+        report_gen.generate_report(data, str(output_path))
         print_progress(f"Report saved to: {output_path}", done=True)
     
     except Exception as e:

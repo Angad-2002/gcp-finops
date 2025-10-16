@@ -1,0 +1,25 @@
+google-cloud-bigquery>=3.11.0
+google-cloud-run>=0.10.0
+google-cloud-functions>=1.13.0
+google-cloud-compute>=1.14.0
+google-api-python-client>=2.100.0
+google-cloud-monitoring>=2.15.0
+google-cloud-resource-manager>=1.10.0
+google-auth>=2.23.0
+rich>=13.5.0
+plotly>=5.16.0
+kaleido>=0.2.1
+reportlab>=4.0.0
+click>=8.1.0
+pandas>=2.0.0
+python-dateutil>=2.8.0
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-dotenv>=1.0.0
+groq>=0.4.0
+prophet>=1.1.5
+requests>=2.31.0
+packaging>=23.0
+pyyaml>=6.0
+tomli>=2.0.1; python_version < '3.11'
+

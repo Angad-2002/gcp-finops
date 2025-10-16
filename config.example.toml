@@ -1,0 +1,34 @@
+# GCP FinOps Dashboard Configuration File (TOML format)
+# Copy this file to config.toml and customize for your environment
+
+# GCP Project and Billing Settings
+project-id = "my-gcp-project"
+billing-dataset = "my-project.billing_export"
+billing-table-prefix = "gcp_billing_export_v1"
+location = "US"
+
+# Regions to audit (optional)
+regions = ["us-central1", "us-east1", "us-west1"]
+
+# Report Settings
+report-name = "gcp-finops-report"
+report-type = ["dashboard", "pdf"]
+dir = "./reports"
+
+# Time Range Settings
+time-range = 30  # days
+months-back = 2
+
+# Filter Settings (optional)
+# label = ["env=prod", "team=devops"]
+# service = ["cloud-run", "compute", "cloud-sql"]
+
+# Mode Settings (optional)
+# audit = "all"  # Options: cloud-run, cloud-functions, compute, cloud-sql, storage, all
+# trend = true
+# forecast = true
+
+# API Settings (optional)
+# api = true
+# api-port = 8000
+

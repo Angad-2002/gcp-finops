@@ -1,0 +1,85 @@
+# GCP FinOps Dashboard Configuration Example
+# Copy this file to .gcp-finops.yaml and customize for your project
+
+# GCP Project Configuration
+project_id: my-production-project
+
+# BigQuery Billing Export Configuration
+billing_dataset: my-project.billing_export
+billing_table_prefix: gcp_billing_export_v1
+
+# Regions to Audit
+# List the regions where you have resources deployed
+regions:
+  - us-central1
+  - us-east1
+  - us-west1
+  - europe-west1
+  - asia-east1
+
+# Audit Thresholds
+thresholds:
+  # Consider service idle after this many days with no activity
+  idle_days: 30
+  
+  # Flag CPU usage below this percentage for optimization
+  low_cpu_percent: 10
+  
+  # Flag memory usage below this percentage for optimization
+  low_memory_percent: 20
+  
+  # Minimum request count to consider a service active
+  min_request_count: 1
+
+# Cost Alert Thresholds
+alerts:
+  # Alert if total monthly cost exceeds this amount (USD)
+  monthly_budget: 5000
+  
+  # Alert if any single service exceeds this amount (USD)
+  service_threshold: 500
+  
+  # Alert if month-over-month cost increase exceeds this percentage
+  cost_increase_threshold: 20
+
+# Report Settings
+report:
+  # Output directory for reports
+  output_dir: ./reports
+  
+  # Report filename template (supports strftime format)
+  filename_template: "gcp-finops-report-%Y%m%d.pdf"
+  
+  # Include charts in PDF reports
+  include_charts: true
+  
+  # Number of top recommendations to include
+  top_recommendations: 20
+
+# Audit Filters
+filters:
+  # Skip resources with these labels (key:value pairs)
+  skip_labels:
+    - environment:test
+    - temporary:true
+  
+  # Only audit resources with these labels (optional)
+  include_labels: []
+  
+  # Skip specific resource types
+  skip_resource_types: []
+
+# Advanced Settings
+advanced:
+  # Number of months to analyze for trends
+  trend_months: 6
+  
+  # Enable detailed logging
+  verbose: false
+  
+  # Parallel execution for faster audits
+  parallel_audits: true
+  
+  # Timeout for API calls (seconds)
+  api_timeout: 30
+

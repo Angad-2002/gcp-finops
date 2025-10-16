@@ -1,0 +1,70 @@
+[project]
+name = "gcp-finops-dashboard"
+version = "1.0.0"
+description = "GCP FinOps Dashboard for Cloud Run, serverless services, and cost optimization"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "GCP FinOps Dashboard Team"}
+]
+dependencies = [
+    "google-cloud-bigquery>=3.11.0",
+    "google-cloud-run>=0.10.0",
+    "google-cloud-functions>=1.13.0",
+    "google-cloud-compute>=1.14.0",
+    "google-api-python-client>=2.100.0",
+    "google-cloud-monitoring>=2.15.0",
+    "google-cloud-resource-manager>=1.10.0",
+    "google-auth>=2.23.0",
+    "rich>=13.5.0",
+    "plotly>=5.16.0",
+    "kaleido>=0.2.1",
+    "fpdf2>=2.7.5",
+    "click>=8.1.0",
+    "pandas>=2.0.0",
+    "python-dateutil>=2.8.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "python-dotenv>=1.0.0",
+    "reportlab>=4.0.0",
+    "groq>=0.4.0",
+    "prophet>=1.1.5",
+    "requests>=2.31.0",
+    "packaging>=23.0",
+    "pyyaml>=6.0",
+    "tomli>=2.0.1; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "mypy>=1.5.0",
+    "black>=23.7.0",
+    "ruff>=0.0.280",
+]
+
+[project.scripts]
+gcp-finops = "gcp_finops_dashboard.cli:cli_main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["gcp_finops_dashboard"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+

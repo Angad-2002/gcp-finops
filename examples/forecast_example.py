@@ -228,11 +228,11 @@ def main():
         print("  4. Schedule regular forecast generation (e.g., weekly reports)")
         
     except requests.exceptions.ConnectionError:
-        print("\n❌ Error: Could not connect to API server")
+        print("\nError: Could not connect to API server")
         print(f"   Make sure the API is running at {API_BASE_URL}")
         print("   Start it with: python -m gcp_finops_dashboard.api")
     except Exception as e:
-        print(f"\n❌ Error: {str(e)}")
+        print(f"\nError: {str(e)}")
 
 
 if __name__ == "__main__":

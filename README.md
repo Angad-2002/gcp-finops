@@ -35,19 +35,19 @@ A comprehensive cost optimization and resource auditing tool for Google Cloud Pl
 ## 🛠️ Installation
 
 ### Option 1: Install from PyPI (Recommended)
-```bash
+   ```bash
 pip install gcp-finops-dashboard
 ```
 
 ### Option 2: Install from Source
-```bash
+   ```bash
 git clone https://github.com/your-repo/gcp-finops-dashboard.git
 cd gcp-finops-dashboard
 pip install -e .
 ```
 
 ### Option 3: Using uv (Fast Python Package Manager)
-```bash
+   ```bash
 uv add gcp-finops-dashboard
 ```
 
@@ -85,33 +85,92 @@ export GCP_PROJECT_ID=YOUR_PROJECT_ID
 ```
 
 ### 5. Optional: Configure AI Features
-To enable AI-powered insights, set your Groq API key:
+The dashboard now supports multiple AI providers. Configure your preferred provider:
+
+#### Groq (Fast, Open Source Models)
 ```bash
 export GROQ_API_KEY=your_groq_api_key_here
+```
+
+#### OpenAI (GPT Models)
+```bash
+export OPENAI_API_KEY=your_openai_api_key_here
+```
+
+#### Anthropic (Claude Models)
+```bash
+export ANTHROPIC_API_KEY=your_anthropic_api_key_here
+```
+
+#### Interactive AI Setup
+```bash
+gcp-finops config ai --interactive
 ```
 
 ## 🚀 Quick Start
 
 ### Command Line Interface
 
+The CLI now supports multiple commands for different operations:
+
 #### Run Complete Dashboard
 ```bash
-gcp-finops --billing-dataset YOUR_PROJECT.billing_export
+gcp-finops dashboard --billing-dataset YOUR_PROJECT.billing_export
 ```
 
 #### Generate PDF Report
 ```bash
-gcp-finops --billing-dataset YOUR_PROJECT.billing_export --report-type pdf
+gcp-finops report --billing-dataset YOUR_PROJECT.billing_export
 ```
 
 #### Run Specific Audit
 ```bash
-gcp-finops --billing-dataset YOUR_PROJECT.billing_export --audit cloud-run
+gcp-finops audit cloud-run --billing-dataset YOUR_PROJECT.billing_export
+```
+
+#### Generate Cost Forecast
+```bash
+gcp-finops forecast --billing-dataset YOUR_PROJECT.billing_export
+```
+
+#### Display Trend Analysis
+```bash
+gcp-finops trend --billing-dataset YOUR_PROJECT.billing_export
+```
+
+#### Start API Server
+```bash
+gcp-finops api --port 8000
 ```
 
 #### Use Configuration File
 ```bash
-gcp-finops --config-file config.yaml
+gcp-finops run --config-file config.yaml
+```
+
+#### Interactive Setup
+```bash
+gcp-finops setup --interactive
+```
+
+### ASCII Art & Visual Enhancements
+The dashboard now includes ASCII art support for enhanced visual appeal:
+
+```bash
+# List available fonts
+gcp-finops fonts --list
+
+# Preview specific font
+gcp-finops fonts --font block
+
+# Use custom font in config
+gcp-finops run --config-file config.toml
+```
+
+### Interactive Mode
+Start the interactive mode for guided setup and analysis:
+```bash
+gcp-finops setup --interactive
 ```
 
 ### Configuration File
@@ -262,15 +321,40 @@ forecast = forecast_service.forecast_costs(
 print(f"Predicted cost: ${forecast.total_predicted_cost:,.2f}")
 ```
 
-## 🔧 Command Line Options
+## 🔧 Command Line Interface
 
-### Global Options
+### Available Commands
+
+#### Core Commands
+- `gcp-finops dashboard` - Run complete dashboard analysis
+- `gcp-finops report` - Generate PDF reports
+- `gcp-finops audit` - Run specific resource audits
+- `gcp-finops forecast` - Generate cost forecasts
+- `gcp-finops trend` - Display trend analysis
+- `gcp-finops run` - Run with configuration file support
+- `gcp-finops api` - Start API server
+
+#### AI Commands
+- `gcp-finops ai analyze` - Generate AI analysis
+- `gcp-finops ai ask` - Ask questions about your data
+- `gcp-finops ai summary` - Generate executive summary
+- `gcp-finops ai explain-spike` - Explain cost changes
+- `gcp-finops ai prioritize` - Prioritize recommendations
+- `gcp-finops ai budget-suggestions` - Get budget recommendations
+- `gcp-finops ai utilization` - Analyze resource utilization
+
+#### Configuration Commands
+- `gcp-finops config ai` - Configure AI providers
+- `gcp-finops setup` - Show setup instructions or interactive mode
+- `gcp-finops fonts` - ASCII art font management
+
+### Common Options
 - `--config-file, -C`: Path to configuration file (TOML, YAML, or JSON)
 - `--project-id, -p`: GCP project ID
 - `--billing-dataset, -b`: BigQuery billing dataset
 - `--billing-table-prefix`: Billing table prefix (default: gcp_billing_export_v1)
 - `--location, -l`: BigQuery location (default: US)
-- `--regions, -r`: Regions to audit (space-separated)
+- `--regions, -r`: Regions to audit (comma-separated)
 - `--hide-project-id`: Hide project ID in output for security
 
 ### Report Options
@@ -286,14 +370,8 @@ print(f"Predicted cost: ${forecast.total_predicted_cost:,.2f}")
 - `--label, -g`: Filter by labels/tags
 - `--service, -s`: Filter by specific GCP services
 
-### Mode Options
-- `--audit, -a`: Run specific audit (cloud-run, cloud-functions, compute, cloud-sql, storage, all)
-- `--trend`: Display trend report
-- `--forecast`: Display cost forecast
-
 ### API Options
-- `--api`: Start API server
-- `--api-port`: Port for API server (default: 8000)
+- `--port`: Port for API server (default: 8000)
 
 ## 📁 Project Structure
 
@@ -363,22 +441,54 @@ gcp-finops-dashboard/
 
 ## 🤖 AI Features
 
-### Groq LLM Integration
-The dashboard integrates with Groq's fast LLM API to provide:
+### Multi-Provider AI Integration
+The dashboard now supports multiple AI providers for maximum flexibility:
 
+#### Groq (Fast, Open Source Models)
 - **Natural Language Analysis**: Ask questions about your cost data
 - **Anomaly Detection**: Identify unusual spending patterns
 - **Executive Summaries**: Generate stakeholder-ready reports
 - **Smart Recommendations**: Prioritize optimization opportunities
 - **Cost Spike Explanations**: Understand why costs changed
 
-### Available Models
-- `llama3-8b-8192` (Default, Fast)
-- `llama3-70b-8192` (High Quality)
+**Available Models:**
+- `llama-3.3-70b-versatile` (Recommended, High Quality)
+- `llama-3.1-8b-instant` (Fast, Efficient)
 - `mixtral-8x7b-32768` (Balanced)
 - `gemma2-9b-it` (Efficient)
 
-### Example AI Queries
+#### OpenAI (GPT Models)
+- **GPT-4o**: Latest GPT-4 model with vision capabilities
+- **GPT-4o-mini**: Faster, cost-effective option
+- **GPT-3.5-turbo**: Reliable and fast
+
+#### Anthropic (Claude Models)
+- **Claude-3.5-Sonnet**: Best for complex analysis
+- **Claude-3-Haiku**: Fast and efficient
+- **Claude-3-Opus**: Most capable for complex tasks
+
+### AI Command Line Interface
+```bash
+# Configure AI provider interactively
+gcp-finops config ai --interactive
+
+# Show current AI configuration
+gcp-finops config ai --show
+
+# Manual AI provider setup
+gcp-finops config ai --provider groq --api-key KEY --model llama-3.3-70b-versatile
+
+# AI-powered analysis commands
+gcp-finops ai analyze                          # Generate AI analysis
+gcp-finops ai ask "Why are my costs high?"     # Ask questions
+gcp-finops ai summary                          # Generate executive summary
+gcp-finops ai explain-spike                    # Explain cost changes
+gcp-finops ai prioritize                       # Prioritize recommendations
+gcp-finops ai budget-suggestions               # Get budget recommendations
+gcp-finops ai utilization                      # Analyze resource utilization
+```
+
+### API AI Endpoints
 ```bash
 # Ask questions about your data
 curl -X POST "http://localhost:8000/api/ai/ask" \
@@ -706,6 +816,13 @@ For enterprise support, custom features, or consulting services, contact us at s
 - **v1.1.0**: Added AI-powered insights and forecasting
 - **v1.2.0**: Enhanced API and report generation
 - **v1.3.0**: Multi-region support and advanced filtering
+- **v2.0.0**: Complete CLI refactor with Click-based commands
+  - Multi-provider AI support (Groq, OpenAI, Anthropic)
+  - Interactive setup and configuration
+  - ASCII art fonts and visual enhancements
+  - Enhanced recommendation display with tables
+  - New command structure (dashboard, forecast, trend, etc.)
+  - Improved error handling and user experience
 
 ## 🙏 Acknowledgments
 

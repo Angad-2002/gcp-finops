@@ -23,7 +23,7 @@ def main():
     BILLING_DATASET = "your-project.billing_export"  # Replace with your billing dataset
     REGIONS = ["us-central1", "us-east1"]
     
-    print("🚀 Starting GCP FinOps Dashboard...\n")
+    print("Starting GCP FinOps Dashboard...\n")
     
     try:
         # Initialize dashboard runner
@@ -35,7 +35,7 @@ def main():
         )
         
         # Run complete analysis
-        print("📊 Running cost and resource analysis...")
+        print("Running cost and resource analysis...")
         data = runner.run()
         
         # Display dashboard in terminal
@@ -47,10 +47,10 @@ def main():
         visualizer.display_dashboard(data)
         
         # Generate PDF report
-        print("\n📄 Generating PDF report...")
+        print("\nGenerating PDF report...")
         report_gen = ReportGenerator(output_dir="./reports")
         report_path = report_gen.generate_report(data, "finops-report.pdf")
-        print(f"✅ Report saved to: {report_path}")
+        print(f"Report saved to: {report_path}")
         
         # Print summary statistics
         print("\n" + "="*80)
@@ -63,7 +63,7 @@ def main():
         print(f"Potential yearly savings: ${data.total_potential_savings * 12:,.2f}")
         
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return 1

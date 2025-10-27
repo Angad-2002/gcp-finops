@@ -66,7 +66,7 @@ class DashboardVisualizer:
         
         panel = Panel(
             header_text,
-            title="💰 Cost Optimization Dashboard",
+            title="Cost Optimization Dashboard",
             border_style="cyan",
             box=box.DOUBLE
         )
@@ -79,7 +79,7 @@ class DashboardVisualizer:
         change_symbol = "↑" if change > 0 else "↓" if change < 0 else "→"
         change_color = "red" if change > 0 else "green" if change < 0 else "yellow"
         
-        table = Table(title="💰 Cost Summary", box=box.ROUNDED, show_header=False)
+        table = Table(title="Cost Summary", box=box.ROUNDED, show_header=False)
         table.add_column("Metric", style="cyan", width=25)
         table.add_column("Value", style="white", width=30)
         
@@ -100,7 +100,7 @@ class DashboardVisualizer:
         
         total = sum(service_costs.values())
         
-        table = Table(title="📊 Top Services by Cost", box=box.ROUNDED)
+        table = Table(title="Top Services by Cost", box=box.ROUNDED)
         table.add_column("Rank", style="dim", width=6)
         table.add_column("Service", style="cyan", width=30)
         table.add_column("Cost", style="white", justify="right", width=15)
@@ -122,7 +122,7 @@ class DashboardVisualizer:
         if not audit_results:
             return
         
-        table = Table(title="🔍 Resource Audit Summary", box=box.ROUNDED)
+        table = Table(title="Resource Audit Summary", box=box.ROUNDED)
         table.add_column("Resource Type", style="cyan", width=20)
         table.add_column("Total", style="white", justify="center", width=8)
         table.add_column("Untagged", style="yellow", justify="center", width=10)
@@ -151,7 +151,7 @@ class DashboardVisualizer:
         # Sort by potential savings
         sorted_recs = sorted(recommendations, key=lambda r: r.potential_monthly_savings, reverse=True)[:top_n]
         
-        table = Table(title="💡 Top Optimization Opportunities", box=box.ROUNDED)
+        table = Table(title="Top Optimization Opportunities", box=box.ROUNDED)
         table.add_column("Priority", style="white", width=8)
         table.add_column("Resource", style="cyan", width=25)
         table.add_column("Issue", style="yellow", width=35)
@@ -193,7 +193,7 @@ class DashboardVisualizer:
         self.console.print(panel)
     
     def display_detailed_recommendations(self, recommendations: List[OptimizationRecommendation]) -> None:
-        """Display detailed recommendations with actions.
+        """Display detailed recommendations in a table format.
         
         Args:
             recommendations: List of recommendations
@@ -211,13 +211,45 @@ class DashboardVisualizer:
         
         for resource_type, recs in by_type.items():
             self.console.print(f"\n[bold cyan]{resource_type.replace('_', ' ').title()}[/bold cyan]")
-            self.console.print("─" * 80)
             
-            for rec in sorted(recs, key=lambda r: r.potential_monthly_savings, reverse=True):
-                self.console.print(f"\n[yellow]●[/yellow] {rec.resource_name} ({rec.region})")
-                self.console.print(f"  Issue: {rec.issue}")
-                self.console.print(f"  [green]→[/green] {rec.recommendation}")
-                self.console.print(f"  [bold green]Savings: {format_currency(rec.potential_monthly_savings)}/month[/bold green]")
+            # Create table for this resource type
+            table = Table(
+                title=f"{resource_type.replace('_', ' ').title()} Optimization Recommendations",
+                show_header=True,
+                header_style="bold magenta",
+                box=box.ROUNDED
+            )
+            
+            # Add columns
+            table.add_column("Resource", style="cyan", width=25)
+            table.add_column("Region", style="blue", width=15)
+            table.add_column("Issue", style="yellow", width=30)
+            table.add_column("Recommendation", style="green", width=35)
+            table.add_column("Priority", style="red", width=8)
+            table.add_column("Monthly Savings", justify="right", style="bold green", width=15)
+            
+            # Sort by savings (highest first)
+            sorted_recs = sorted(recs, key=lambda r: r.potential_monthly_savings, reverse=True)
+            
+            # Add rows
+            for rec in sorted_recs:
+                # Color code priority
+                priority_color = {
+                    "high": "bold red",
+                    "medium": "bold yellow", 
+                    "low": "bold green"
+                }.get(rec.priority, "white")
+                
+                table.add_row(
+                    rec.resource_name,
+                    rec.region,
+                    rec.issue,
+                    rec.recommendation,
+                    f"[{priority_color}]{rec.priority.upper()}[/{priority_color}]",
+                    format_currency(rec.potential_monthly_savings)
+                )
+            
+            self.console.print(table)
     
     def display_forecast(self, forecast_data: ForecastData) -> None:
         """Display cost forecast in terminal.
@@ -226,7 +258,7 @@ class DashboardVisualizer:
             forecast_data: Forecast data from ForecastService
         """
         if not forecast_data.forecast_points:
-            self.console.print("[yellow]⚠ No forecast data available. Insufficient historical data.[/yellow]")
+            self.console.print("[yellow]Warning: No forecast data available. Insufficient historical data.[/yellow]")
             return
         
         # Add spacing
@@ -240,7 +272,7 @@ class DashboardVisualizer:
         
         panel = Panel(
             header_text,
-            title="💰 Cost Forecasting Dashboard",
+            title="Cost Forecasting Dashboard",
             border_style="cyan",
             box=box.DOUBLE
         )
@@ -260,7 +292,7 @@ class DashboardVisualizer:
     
     def _display_forecast_summary(self, forecast_data: ForecastData) -> None:
         """Display forecast summary table."""
-        table = Table(title="📊 Forecast Summary", box=box.ROUNDED, show_header=False)
+        table = Table(title="Forecast Summary", box=box.ROUNDED, show_header=False)
         table.add_column("Metric", style="cyan", width=25)
         table.add_column("Value", style="white", width=30)
         
@@ -347,31 +379,31 @@ class DashboardVisualizer:
         confidence_color = "green" if forecast_data.model_confidence > 0.8 else "yellow" if forecast_data.model_confidence > 0.6 else "red"
         
         # Trend interpretation
-        trend_emoji = {
-            "increasing": "📈",
-            "decreasing": "📉", 
-            "stable": "➡️",
-            "unknown": "❓"
-        }.get(forecast_data.trend, "❓")
+        trend_symbol = {
+            "increasing": "↑",
+            "decreasing": "↓", 
+            "stable": "→",
+            "unknown": "?"
+        }.get(forecast_data.trend, "?")
         
         metadata_text = Text()
         metadata_text.append(f"Model Confidence: ", style="white")
         metadata_text.append(f"{confidence_level} ({forecast_data.model_confidence:.1%})", style=confidence_color)
         metadata_text.append(f"\nTrend: ", style="white")
-        metadata_text.append(f"{trend_emoji} {forecast_data.trend.upper()}", style="cyan")
+        metadata_text.append(f"{trend_symbol.get(forecast_data.trend, '?')} {forecast_data.trend.upper()}", style="cyan")
         
         if forecast_data.trend == "increasing":
-            metadata_text.append(f"\n\n💡 Recommendation: Consider setting budget alerts at ", style="yellow")
+            metadata_text.append(f"\n\nRecommendation: Consider setting budget alerts at ", style="yellow")
             metadata_text.append(f"${forecast_data.total_predicted_cost * 1.1:,.2f}", style="bold yellow")
             metadata_text.append(f" (+10% buffer)", style="yellow")
         elif forecast_data.trend == "decreasing":
-            metadata_text.append(f"\n\n✅ Good news: Costs are trending downward!", style="green")
+            metadata_text.append(f"\n\nGood news: Costs are trending downward!", style="green")
         else:
-            metadata_text.append(f"\n\n📊 Costs appear stable. Monitor for any changes.", style="blue")
+            metadata_text.append(f"\n\nCosts appear stable. Monitor for any changes.", style="blue")
         
         panel = Panel(
             metadata_text,
-            title="🔍 Forecast Analysis",
+            title="Forecast Analysis",
             border_style="blue",
             box=box.ROUNDED
         )
@@ -545,5 +577,5 @@ def print_warning(message: str) -> None:
     Args:
         message: Warning message
     """
-    console.print(f"[yellow]⚠[/yellow] {message}")
+    console.print(f"[yellow]Warning:[/yellow] {message}")
 

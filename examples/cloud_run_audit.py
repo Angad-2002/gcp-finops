@@ -20,7 +20,7 @@ def main():
     PROJECT_ID = "your-project-id"  # Replace with your project ID
     REGIONS = ["us-central1", "us-east1", "europe-west1"]
     
-    print("🔍 Cloud Run Audit\n")
+    print("Cloud Run Audit\n")
     print(f"Project: {PROJECT_ID}")
     print(f"Regions: {', '.join(REGIONS)}\n")
     
@@ -75,11 +75,11 @@ def main():
             print("ISSUES ENCOUNTERED")
             print("="*80 + "\n")
             for issue in result.issues:
-                print(f"⚠️  {issue}")
+                print(f"Warning: {issue}")
             print()
     
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return 1

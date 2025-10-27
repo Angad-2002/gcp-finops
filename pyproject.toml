@@ -33,7 +33,12 @@ dependencies = [
     "requests>=2.31.0",
     "packaging>=23.0",
     "pyyaml>=6.0",
-    "tomli>=2.0.1; python_version < '3.11'",
+    "tomli>=2.0.1 ; python_full_version < '3.11'",
+    "inquirerpy>=0.3.4",
+    "pyfiglet>=0.8.0",
+    "toml>=0.10.2",
+    "openai>=1.0.0",
+    "anthropic>=0.7.0",
 ]
 
 [project.optional-dependencies]
@@ -45,7 +50,7 @@ dev = [
 ]
 
 [project.scripts]
-gcp-finops = "gcp_finops_dashboard.cli:cli_main"
+gcp-finops = "gcp_finops_dashboard.cli:_intercept_help_and_show_banner"
 
 [build-system]
 requires = ["setuptools>=68.0"]

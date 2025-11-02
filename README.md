@@ -262,7 +262,7 @@ gcp-finops --api --api-port 8000
 
 ```python
 from gcp_finops_dashboard.dashboard_runner import DashboardRunner
-from gcp_finops_dashboard.visualizations import DashboardVisualizer
+from gcp_finops_dashboard.utils.visualizations import DashboardVisualizer
 
 # Initialize runner
 runner = DashboardRunner(
@@ -282,7 +282,7 @@ visualizer.display_dashboard(data)
 ### Cloud Run Specific Audit
 
 ```python
-from gcp_finops_dashboard.cloud_run_auditor import CloudRunAuditor
+from gcp_finops_dashboard.auditors import CloudRunAuditor
 from gcp_finops_dashboard.gcp_client import GCPClient
 
 # Initialize auditor
@@ -379,8 +379,15 @@ print(f"Predicted cost: ${forecast.total_predicted_cost:,.2f}")
 gcp-finops-dashboard/
 ├── gcp_finops_dashboard/          # Main package
 │   ├── __init__.py
-│   ├── api.py                     # FastAPI server
-│   ├── cli.py                     # Command-line interface
+│   ├── api/                       # FastAPI server (modularized)
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   └── routes/
+│   ├── cli/                       # Command-line interface (modularized)
+│   │   ├── main.py
+│   │   ├── commands/
+│   │   ├── interactive/
+│   │   └── utils/
 │   ├── dashboard_runner.py        # Main dashboard orchestrator
 │   ├── gcp_client.py             # GCP service clients
 │   ├── cost_processor.py         # BigQuery cost analysis
@@ -726,7 +733,7 @@ print(f"Total cost: ${data.current_month_cost:,.2f}")
 ### Cloud Run Audit
 ```python
 # examples/cloud_run_audit.py
-from gcp_finops_dashboard.cloud_run_auditor import CloudRunAuditor
+from gcp_finops_dashboard.auditors import CloudRunAuditor
 
 auditor = CloudRunAuditor(cloud_run_client, monitoring_client, project_id)
 result = auditor.audit_all_services(["us-central1"])

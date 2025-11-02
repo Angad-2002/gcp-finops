@@ -4,7 +4,7 @@ from typing import List, Optional
 from google.cloud import compute_v1
 from google.api_core import exceptions
 
-from .types import PersistentDisk, StaticIPAddress, OptimizationRecommendation, AuditResult
+from ..types import PersistentDisk, StaticIPAddress, OptimizationRecommendation, AuditResult
 
 
 class StorageAuditor:

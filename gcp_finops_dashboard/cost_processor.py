@@ -164,6 +164,66 @@ class CostProcessor:
         
         return [(row.month, float(row.total_cost)) for row in results]
     
+    def get_monthly_cost_trend(
+        self,
+        months: int = 6,
+        project_id: Optional[str] = None
+    ) -> List[Tuple[str, float]]:
+        """Get monthly cost trend for all services.
+        
+        Args:
+            months: Number of months to look back (default: 6)
+            project_id: Filter by project ID (optional)
+        
+        Returns:
+            List of (month, cost) tuples where month is in 'YYYY-MM' format
+        """
+        from datetime import datetime
+        from dateutil.relativedelta import relativedelta
+        
+        # Calculate date range
+        today = datetime.now()
+        start_date = (today - relativedelta(months=months)).replace(day=1)
+        end_date = today
+        
+        start_date_str = start_date.strftime("%Y%m%d")
+        end_date_str = end_date.strftime("%Y%m%d")
+        
+        # Handle project field as RECORD (STRUCT) format
+        if project_id:
+            project_filter = f"""AND project.id = '{project_id}'"""
+        else:
+            project_filter = ""
+        
+        query = f"""
+            SELECT 
+                FORMAT_DATE('%Y-%m', DATE(usage_start_time)) as month,
+                SUM(cost) as total_cost
+            FROM `{self.billing_dataset}.{self.billing_table_prefix}_*`
+            WHERE _TABLE_SUFFIX BETWEEN @start_date AND @end_date
+            {project_filter}
+            GROUP BY month
+            ORDER BY month
+        """
+        
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("start_date", "STRING", start_date_str),
+                bigquery.ScalarQueryParameter("end_date", "STRING", end_date_str),
+            ]
+        )
+        
+        results = self.client.query(query, job_config=job_config).result()
+        
+        # Convert to list of tuples and format month nicely
+        monthly_costs = []
+        for row in results:
+            # Convert 'YYYY-MM' to 'MMM YYYY' format (e.g., '2024-01' -> 'Jan 2024')
+            month_str = datetime.strptime(row.month, "%Y-%m").strftime("%b %Y")
+            monthly_costs.append((month_str, float(row.total_cost)))
+        
+        return monthly_costs
+    
     def get_cloud_run_costs(
         self,
         start_date: str,

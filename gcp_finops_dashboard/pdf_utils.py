@@ -21,7 +21,7 @@ from reportlab.platypus import (
 
 from .types import DashboardData, AuditResult, OptimizationRecommendation
 from .helpers import format_currency, format_percentage, calculate_percentage_change
-from .visualizations import ChartGenerator
+from .utils.visualizations import ChartGenerator
 
 
 def get_pdf_styles():

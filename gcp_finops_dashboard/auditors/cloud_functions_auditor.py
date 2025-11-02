@@ -6,8 +6,8 @@ from google.cloud import functions_v2
 from google.cloud import monitoring_v3
 from google.api_core import exceptions
 
-from .types import CloudFunction, CloudFunctionMetrics, OptimizationRecommendation, AuditResult
-from .helpers import get_resource_name_from_uri
+from ..types import CloudFunction, CloudFunctionMetrics, OptimizationRecommendation, AuditResult
+from ..helpers import get_resource_name_from_uri
 
 
 class CloudFunctionsAuditor:

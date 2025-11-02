@@ -6,13 +6,13 @@ from google.cloud import run_v2
 from google.cloud import monitoring_v3
 from google.api_core import exceptions
 
-from .types import (
+from ..types import (
     CloudRunService,
     CloudRunMetrics,
     OptimizationRecommendation,
     AuditResult
 )
-from .helpers import parse_memory_string, format_memory_mb, get_resource_name_from_uri
+from ..helpers import parse_memory_string, format_memory_mb, get_resource_name_from_uri
 
 
 class CloudRunAuditor:

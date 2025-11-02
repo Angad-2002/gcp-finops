@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from gcp_finops_dashboard.gcp_client import GCPClient
-from gcp_finops_dashboard.cloud_run_auditor import CloudRunAuditor
+from gcp_finops_dashboard.auditors import CloudRunAuditor
 
 
 def main():

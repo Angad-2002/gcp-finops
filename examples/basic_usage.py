@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from gcp_finops_dashboard.dashboard_runner import DashboardRunner
-from gcp_finops_dashboard.visualizations import DashboardVisualizer
+from gcp_finops_dashboard.utils.visualizations import DashboardVisualizer
 from gcp_finops_dashboard.pdf_utils import ReportGenerator
 
 

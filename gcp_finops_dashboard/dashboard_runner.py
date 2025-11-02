@@ -5,13 +5,16 @@ from datetime import datetime
 
 from .gcp_client import GCPClient
 from .cost_processor import CostProcessor
-from .cloud_run_auditor import CloudRunAuditor
-from .cloud_functions_auditor import CloudFunctionsAuditor
-from .compute_auditor import ComputeAuditor
-from .cloud_sql_auditor import CloudSQLAuditor
-from .storage_auditor import StorageAuditor
-from .types import DashboardData, AuditResult, OptimizationRecommendation
-from .visualizations import print_progress, print_error, print_warning
+from .auditors import (
+    CloudRunAuditor,
+    CloudFunctionsAuditor,
+    ComputeAuditor,
+    CloudSQLAuditor,
+    StorageAuditor,
+)
+from .forecast_service import ForecastService
+from .types import DashboardData, AuditResult, OptimizationRecommendation, ForecastData
+from .utils.visualizations import print_progress, print_error, print_warning
 from .helpers import get_current_month_range
 
 
@@ -82,6 +85,13 @@ class DashboardRunner:
             self.gcp_client.compute_disks,
             self.gcp_client.compute_addresses,
             project_id
+        )
+        
+        # Initialize forecast service
+        self.forecast_service = ForecastService(
+            self.gcp_client.bigquery,
+            billing_dataset,
+            billing_table_prefix
         )
     
     def run(self) -> DashboardData:
@@ -237,4 +247,38 @@ class DashboardRunner:
             return self.storage_auditor.audit_static_ips(self.regions)
         else:
             return None
+    
+    def run_forecast(self, forecast_days: int = 90, historical_days: int = 180) -> ForecastData:
+        """Run cost forecasting analysis.
+        
+        Args:
+            forecast_days: Number of days to forecast into the future
+            historical_days: Number of days of historical data to use
+        
+        Returns:
+            ForecastData with cost predictions
+        """
+        print_progress("Generating cost forecast...")
+        
+        try:
+            forecast_data = self.forecast_service.forecast_costs(
+                forecast_days=forecast_days,
+                historical_days=historical_days,
+                project_id=self.project_id
+            )
+            
+            print_progress("Forecast complete", done=True)
+            return forecast_data
+            
+        except Exception as e:
+            print_error(f"Failed to generate forecast: {str(e)}")
+            # Return empty forecast data on error
+            return ForecastData(
+                forecast_points=[],
+                total_predicted_cost=0.0,
+                forecast_days=forecast_days,
+                model_confidence=0.0,
+                trend="unknown",
+                generated_at=datetime.now().isoformat()
+            )
 

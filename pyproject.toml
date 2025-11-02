@@ -50,7 +50,7 @@ dev = [
 ]
 
 [project.scripts]
-gcp-finops = "gcp_finops_dashboard.cli:_intercept_help_and_show_banner"
+gcp-finops = "gcp_finops_dashboard.cli.main:main"
 
 [build-system]
 requires = ["setuptools>=68.0"]

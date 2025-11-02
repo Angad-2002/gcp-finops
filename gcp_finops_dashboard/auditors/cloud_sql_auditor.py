@@ -6,7 +6,7 @@ from google.cloud import monitoring_v3
 from googleapiclient.discovery import Resource
 from googleapiclient.errors import HttpError
 
-from .types import CloudSQLInstance, CloudSQLMetrics, OptimizationRecommendation, AuditResult
+from ..types import CloudSQLInstance, CloudSQLMetrics, OptimizationRecommendation, AuditResult
 
 
 class CloudSQLAuditor:

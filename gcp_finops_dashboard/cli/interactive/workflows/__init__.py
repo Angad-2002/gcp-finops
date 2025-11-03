@@ -15,6 +15,12 @@ from .config import (
     run_quick_setup,
     show_setup_instructions,
 )
+from .rag import (
+    run_rag_chat_interactive,
+    run_upload_document_interactive,
+    run_list_documents_interactive,
+    run_delete_document_interactive,
+)
 
 __all__ = [
     # AI workflows
@@ -32,5 +38,10 @@ __all__ = [
     "run_ai_config_interactive",
     "run_quick_setup",
     "show_setup_instructions",
+    # RAG workflows
+    "run_rag_chat_interactive",
+    "run_upload_document_interactive",
+    "run_list_documents_interactive",
+    "run_delete_document_interactive",
 ]
 

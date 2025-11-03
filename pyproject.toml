@@ -3,7 +3,7 @@ name = "gcp-finops-dashboard"
 version = "1.0.0"
 description = "GCP FinOps Dashboard for Cloud Run, serverless services, and cost optimization"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.14"
 license = {text = "MIT"}
 authors = [
     {name = "GCP FinOps Dashboard Team"}
@@ -39,6 +39,11 @@ dependencies = [
     "toml>=0.10.2",
     "openai>=1.0.0",
     "anthropic>=0.7.0",
+    "sentence-transformers>=2.2.0",
+    "chromadb>=0.4.0",
+    "pypdf>=3.0.0",
+    "faiss-cpu>=1.7.4",
+    "numpy>=1.24.0",
 ]
 
 [project.optional-dependencies]

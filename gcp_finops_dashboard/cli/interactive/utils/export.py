@@ -12,12 +12,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from ....pdf_utils import ReportGenerator
+from ....api.config import REPORTS_DIR
 
 console = Console()
-
-# Reports directory configuration - same as API and CLI
-REPORTS_DIR = Path(__file__).parent.parent.parent.parent / "reports"
-REPORTS_DIR.mkdir(exist_ok=True)
 
 def prompt_save_and_export(data: "DashboardData", ai_content: Optional[str] = None, default_base: str = "gcp-finops-report") -> None:
     """Ask user whether to save, and in which formats (txt/pdf).

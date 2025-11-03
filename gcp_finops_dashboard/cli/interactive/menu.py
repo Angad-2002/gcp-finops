@@ -18,6 +18,18 @@ from .workflows import (
     run_audit_interactive_mode,
     run_ai_config_interactive,
 )
+from .workflows.rag import (
+    run_rag_chat_interactive,
+    run_upload_document_interactive,
+    run_list_documents_interactive,
+    run_delete_document_interactive,
+)
+from .utils.context import prompt_common_context
+from ...dashboard_runner import DashboardRunner
+from ...utils.visualizations import print_progress, print_error, DashboardVisualizer
+from ...helpers import get_project_id
+from ...pdf_utils import ReportGenerator
+from ...api.config import REPORTS_DIR
 from ..ai.service import LLMService
 
 console = Console()
@@ -89,11 +101,107 @@ class InteractiveMenu:
             if choice == "back":
                 break
             elif choice == "dashboard":
-                show_enhanced_progress("Generating dashboard...")
-                # Add dashboard generation logic
+                InteractiveMenu._run_dashboard_interactive()
             elif choice == "report":
-                show_enhanced_progress("Creating PDF report...")
-                # Add report generation logic
+                InteractiveMenu._run_report_interactive()
+    
+    @staticmethod
+    def _run_dashboard_interactive():
+        """Run interactive dashboard generation."""
+        # Collect common parameters
+        ctx = prompt_common_context()
+        
+        # Get project ID if not provided
+        if not ctx["project_id"]:
+            ctx["project_id"] = get_project_id()
+            if not ctx["project_id"]:
+                print_error("Project ID is required. Please specify it.")
+                return
+        
+        try:
+            # Initialize runner
+            runner = DashboardRunner(
+                project_id=ctx["project_id"],
+                billing_dataset=ctx["billing_dataset"],
+                billing_table_prefix="gcp_billing_export_v1",
+                regions=ctx["regions"],
+                location=ctx["location"],
+                hide_project_id=ctx["hide_project_id"]
+            )
+            
+            # Run dashboard
+            print_progress("Running dashboard analysis...")
+            data = runner.run()
+            print_progress("Dashboard complete", done=True)
+            
+            # Display dashboard
+            visualizer = DashboardVisualizer()
+            visualizer.display_dashboard(data)
+            
+            # Add pause before returning to menu
+            console.print("\n[dim]Press Enter to continue...[/dim]")
+            try:
+                input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+                
+        except Exception as e:
+            print_error(f"Dashboard generation failed: {str(e)}")
+            console.print("[yellow]Please check your configuration and try again.[/]")
+    
+    @staticmethod
+    def _run_report_interactive():
+        """Run interactive PDF report generation."""
+        # Collect common parameters
+        ctx = prompt_common_context()
+        
+        # Get project ID if not provided
+        if not ctx["project_id"]:
+            ctx["project_id"] = get_project_id()
+            if not ctx["project_id"]:
+                print_error("Project ID is required. Please specify it.")
+                return
+        
+        try:
+            # Initialize runner
+            runner = DashboardRunner(
+                project_id=ctx["project_id"],
+                billing_dataset=ctx["billing_dataset"],
+                billing_table_prefix="gcp_billing_export_v1",
+                regions=ctx["regions"],
+                location=ctx["location"],
+                hide_project_id=ctx["hide_project_id"]
+            )
+            
+            # Run dashboard to get data
+            print_progress("Generating report data...")
+            data = runner.run()
+            print_progress("Report data ready", done=True)
+            
+            # Generate PDF report
+            print_progress("Creating PDF report...")
+            REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            filename = f"gcp-finops-report-{timestamp}.pdf"
+            output_path = REPORTS_DIR / filename
+            
+            report_gen = ReportGenerator(output_dir=str(REPORTS_DIR))
+            report_gen.generate_report(data, str(output_path))
+            print_progress("PDF report created", done=True)
+            
+            console.print(f"\n[green]✓[/] Report saved to [cyan]{output_path.resolve()}[/]")
+            
+            # Add pause before returning to menu
+            console.print("\n[dim]Press Enter to continue...[/dim]")
+            try:
+                input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+                
+        except Exception as e:
+            print_error(f"Report generation failed: {str(e)}")
+            console.print("[yellow]Please check your configuration and try again.[/]")
     
     @staticmethod
     def run_ai_menu():
@@ -116,6 +224,7 @@ class InteractiveMenu:
                     ("Generate Executive Summary", "summary"),
                     ("Explain Cost Spikes", "explain-spike"),
                     ("Get Budget Suggestions", "budget"),
+                    ("Document Chat (RAG)", "rag"),
                     ("Configure AI Settings", "config"),
                     ("Back to Main Menu", "back")
                 ]
@@ -157,6 +266,41 @@ class InteractiveMenu:
                     console.print("[red]AI features not available. Please configure AI settings first.[/]")
                     continue
                 run_ai_budget_suggestions_interactive_mode(llm_service)
+            elif choice == "rag":
+                if not ai_available:
+                    console.print("[red]AI features not available. Please configure AI settings first.[/]")
+                    continue
+                InteractiveMenu._run_rag_menu()
+    
+    @staticmethod
+    def _run_rag_menu():
+        """Run RAG (Document Chat) menu."""
+        while True:
+            choice = inquirer.select(
+                message="Document Chat (RAG):",
+                choices=[
+                    ("Chat with Documents", "chat"),
+                    ("Upload PDF Document", "upload"),
+                    ("List Uploaded Documents", "list"),
+                    ("Delete Document", "delete"),
+                    ("Back to AI Menu", "back")
+                ]
+            ).execute()
+            
+            # Normalize tuple results
+            if isinstance(choice, tuple):
+                choice = choice[1]
+            
+            if choice == "back":
+                break
+            elif choice == "chat":
+                run_rag_chat_interactive()
+            elif choice == "upload":
+                run_upload_document_interactive()
+            elif choice == "list":
+                run_list_documents_interactive()
+            elif choice == "delete":
+                run_delete_document_interactive()
     
     @staticmethod
     def run_audit_menu():

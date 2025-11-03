@@ -29,6 +29,8 @@ _forecast_cache_timestamp: Optional[datetime] = None
 _forecast_cache_ttl_seconds = 900  # 15 minutes (forecasts can be cached longer)
 
 # Reports directory configuration
+# Use project root reports directory (consistent across API and CLI)
+# Path calculation: config.py -> api/ -> gcp_finops_dashboard/ -> project_root/
 REPORTS_DIR = Path(__file__).parent.parent.parent / "reports"
 REPORTS_DIR.mkdir(exist_ok=True)
 

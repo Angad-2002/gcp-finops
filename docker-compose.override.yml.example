@@ -1,0 +1,18 @@
+# Example override file for local development
+# Copy this to docker-compose.override.yml and customize
+
+version: '3.8'
+
+services:
+  cli:
+    # Override command for specific use case
+    # command: ["gcp-finops", "dashboard", "--billing-dataset", "your-project.billing_export"]
+    
+    # Mount additional volumes if needed
+    volumes:
+      - ./local-data:/home/appuser/local-data:rw
+    
+    # Add development environment variables
+    environment:
+      - DEBUG=1
+

@@ -76,14 +76,14 @@ class ForecastService:
         )
         
         # Debug logging
-        print(f"[FORECAST DEBUG] Executing query:")
-        print(f"[FORECAST DEBUG] Start date: {start_date_str}, End date: {end_date_str}")
-        print(f"[FORECAST DEBUG] Dataset: {self.billing_dataset}")
-        print(f"[FORECAST DEBUG] Query:\n{query}")
+        # print(f"[FORECAST DEBUG] Executing query:")
+        # print(f"[FORECAST DEBUG] Start date: {start_date_str}, End date: {end_date_str}")
+        # print(f"[FORECAST DEBUG] Dataset: {self.billing_dataset}")
+        # print(f"[FORECAST DEBUG] Query:\n{query}")
         
         results = self.client.query(query, job_config=job_config).result()
         
-        print(f"[FORECAST DEBUG] Query returned {results.total_rows} rows")
+        # print(f"[FORECAST DEBUG] Query returned {results.total_rows} rows")
         
         # Convert to DataFrame in Prophet format
         data = []

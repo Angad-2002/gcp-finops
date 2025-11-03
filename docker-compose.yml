@@ -1,0 +1,85 @@
+services:
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gcp-finops-dashboard:latest
+    # Use interactive mode by default
+    stdin_open: true
+    tty: true
+    # Mount GCP credentials (if using service account)
+    volumes:
+      # Mount GCP credentials directory
+      - ${HOME}/.config/gcloud:/home/appuser/.config/gcloud:ro
+      # Mount service account key (if using service account - uncomment if needed)
+      # - ./gcp-credentials.json:/home/appuser/gcp-credentials.json:ro
+      # Mount local storage for RAG and reports (persistent)
+      - ./data:/home/appuser/.gcp-finops
+      # Mount project directory for easy access
+      - .:/workspace:rw
+    environment:
+      # GCP Configuration
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-}
+      - GCP_BILLING_DATASET=${GCP_BILLING_DATASET:-}
+      - GCP_REGIONS=${GCP_REGIONS:-us-central1,us-east1}
+      # Use service account if credentials file exists, otherwise use ADC
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-/home/appuser/.config/gcloud/application_default_credentials.json}
+      # AI Configuration
+      - AI_PROVIDER=${AI_PROVIDER:-groq}
+      - AI_MODEL=${AI_MODEL:-llama-3.3-70b-versatile}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      # BigQuery Configuration
+      - BIGQUERY_LOCATION=${BIGQUERY_LOCATION:-US}
+      # Python
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    # Override command for interactive mode
+    command: ["gcp-finops", "setup", "--interactive"]
+    # Alternative: Run specific command
+    # command: ["gcp-finops", "dashboard", "--billing-dataset", "${GCP_BILLING_DATASET}"]
+    networks:
+      - gcp-finops-network
+
+  # API Server (optional)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gcp-finops-api
+    image: gcp-finops-dashboard:latest
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - ${HOME}/.config/gcloud:/home/appuser/.config/gcloud:ro
+      # Mount service account key if it exists
+      # - ./gcp-credentials.json:/home/appuser/gcp-credentials.json:ro
+      - ./data:/home/appuser/.gcp-finops
+      - ./reports:/app/reports
+    environment:
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID:-}
+      - GCP_BILLING_DATASET=${GCP_BILLING_DATASET:-}
+      - GCP_REGIONS=${GCP_REGIONS:-us-central1,us-east1}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-/home/appuser/.config/gcloud/application_default_credentials.json}
+      - AI_PROVIDER=${AI_PROVIDER:-groq}
+      - AI_MODEL=${AI_MODEL:-llama-3.3-70b-versatile}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - BIGQUERY_LOCATION=${BIGQUERY_LOCATION:-US}
+      - PYTHONUNBUFFERED=1
+    command: ["gcp-finops", "api", "--port", "8000", "--host", "0.0.0.0"]
+    profiles:
+      - api  # Only start with --profile api
+    networks:
+      - gcp-finops-network
+
+networks:
+  gcp-finops-network:
+    driver: bridge
+
+volumes:
+  gcp-finops-data:
+    driver: local
+

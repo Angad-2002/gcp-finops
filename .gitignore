@@ -38,6 +38,10 @@ ENV/
 *.json
 service-account*.json
 credentials*.json
+gcp-credentials.json
+
+# Docker data
+data/
 
 # Reports and outputs
 *.pdf
@@ -45,6 +49,8 @@ credentials*.json
 *.jpg
 *.jpeg
 temp_*.png
+reports/
+*.txt
 
 # Configuration and Environment Files
 .env

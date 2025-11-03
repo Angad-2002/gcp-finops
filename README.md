@@ -20,7 +20,9 @@ A comprehensive cost optimization and resource auditing tool for Google Cloud Pl
 - **Storage**: Persistent disk and static IP auditing
 
 ### AI-Powered Insights
-- **Groq LLM Integration**: Natural language analysis of cost data
+- **Multiple LLM Providers**: Support for Groq, OpenAI, and Anthropic models
+- **Document Chat (RAG)**: Upload PDF reports and ask questions using Retrieval Augmented Generation
+- **Natural Language Analysis**: Query your cost data in plain English
 - **Anomaly Detection**: Identify unusual spending patterns
 - **Executive Summaries**: Generate stakeholder-ready reports
 - **Smart Recommendations**: Prioritize optimization opportunities
@@ -495,6 +497,47 @@ gcp-finops ai budget-suggestions               # Get budget recommendations
 gcp-finops ai utilization                      # Analyze resource utilization
 ```
 
+### Document Chat (RAG) - Upload & Query PDF Reports
+The dashboard now includes a Retrieval Augmented Generation (RAG) system that allows you to upload PDF reports and ask questions about them using AI.
+
+**Features:**
+- Upload PDF documents (e.g., FinOps reports, budget analysis, cost summaries)
+- Automatic text extraction and chunking
+- Semantic search using embeddings (ChromaDB or FAISS)
+- Chat interface to ask questions about your documents
+- Multiple document support with intelligent grouping
+
+**Usage:**
+```bash
+# Interactive mode
+gcp-finops setup -i
+# Navigate to: AI-Powered Insights -> Document Chat (RAG)
+
+# Available actions:
+# - Upload PDF Document
+# - Chat with Documents
+# - List Uploaded Documents
+# - Delete Document
+```
+
+**Dependencies:**
+```bash
+# Install RAG dependencies
+pip install sentence-transformers chromadb pypdf
+# Or with FAISS instead of ChromaDB:
+pip install sentence-transformers faiss-cpu pypdf
+```
+
+**How it works:**
+1. Upload PDF files through the interactive menu
+2. Documents are automatically processed and chunked
+3. Text embeddings are generated using `all-MiniLM-L6-v2` model
+4. Documents are stored in a vector database (ChromaDB or FAISS)
+5. When you ask a question, relevant document chunks are retrieved
+6. Context from documents is combined with your question and sent to the LLM
+
+**Note:** Documents are stored locally in `~/.gcp-finops/rag/` by default.
+
 ### API AI Endpoints
 ```bash
 # Ask questions about your data
@@ -537,6 +580,11 @@ Generate comprehensive PDF reports including:
 - **Recommendations**: Prioritized action items
 - **Forecasts**: Future cost predictions
 - **Charts and Graphs**: Visual cost analysis
+
+**Report Storage:**
+- All reports (API and CLI generated) are saved to the unified `reports/` directory at the project root
+- Reports are automatically organized with timestamps
+- Supports both programmatic generation via API and interactive CLI generation
 
 ### Report Customization
 - **Custom Branding**: Add company logos and colors
